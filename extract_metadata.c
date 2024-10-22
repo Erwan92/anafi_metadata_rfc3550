@@ -24,6 +24,10 @@ static uint8_t gps,qual,rssi,bat,state,mode;
 static float cap,angle_cam,spd,lat_vise,lon_vise,dist_vise;
 static float lat,lon,alt,hfov,vfov;
 
+float calc_speed(float nsp, float esp){
+	spd = sqrt(pow(nsp, 2)+ pow(esp, 2));
+	return spd;
+}
 
 void extract_rfc3550(const u_char *Buffer , int Size)
 {
@@ -74,7 +78,6 @@ void extract_rfc3550(const u_char *Buffer , int Size)
 	cap = -180-atan2(2*(dqw*dqz+dqx*dqy), 1-2*(dqy*dqy+dqz*dqz))*180/M_PI;
 	angle_cam = 90+((-M_PI/2)+ 2*atan2(sqrt(1+2*(fvw*fvy-fvx*fvz)),sqrt(1-2*(fvw*fvy-fvx*fvz))))*180/M_PI;
 	spd = calc_speed(nsp, esp);
-	coords_vise(lat,lon,grd,angle_cam,cap,&lat_vise,&lon_vise,&dist_vise);	
 	printf("CAP : %f - angle camera : %f\n",cap,angle_cam);
 	printf("Ground distance : %f\n",ntohl(meta->ground_distance)/pow(2,16));
 	printf("Latitude : %f\n",ntohl(meta->latitude)/pow(2,22));
